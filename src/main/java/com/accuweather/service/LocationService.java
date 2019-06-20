@@ -47,19 +47,7 @@ public class LocationService {
         Optional<Region> region = loadAllRegions().stream().findFirst();
 
         if(region.isPresent()){
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                    .fromHttpUrl(accuweatherURL + "/locations/v1/countries")
-                    .queryParam("apikey", apikey)
-                    .queryParam("regionCode", region.get().getId());
-
-            ResponseEntity<List<Country>> response = restTemplate.exchange(
-                    uriBuilder.build().encode().toUri(),
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Country>>() {
-                    });
-
-            countriesList = response.getBody();
+            countriesList =  loadAllCountriesFromSpecifiedRegionId(region.get().getId());
         }
         return countriesList;
     }
@@ -70,20 +58,40 @@ public class LocationService {
         Optional<Country> country = loadAllCountriesBasedOnARegion().stream().findFirst();
 
         if(country.isPresent()){
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                    .fromHttpUrl(accuweatherURL + "/locations/v1/adminareas")
-                    .queryParam("apikey", apikey)
-                    .queryParam("countryCode", country.get().getId());
-
-            ResponseEntity<List<AdminArea>> response = restTemplate.exchange(
-                    uriBuilder.build().encode().toUri(),
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<AdminArea>>() {
-                    });
-
-            areasList = response.getBody();
+            areasList = loadAllAreasFromSpecifiedCountryId(country.get().getId());
         }
         return areasList;
+    }
+
+    public List<Country> loadAllCountriesFromSpecifiedRegionId(String regionId){
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromHttpUrl(accuweatherURL + "/locations/v1/countries")
+                .queryParam("apikey", apikey)
+                .queryParam("regionCode", regionId);
+
+        ResponseEntity<List<Country>> response = restTemplate.exchange(
+                uriBuilder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Country>>() {
+                });
+
+        return response.getBody();
+    }
+
+    public List<AdminArea> loadAllAreasFromSpecifiedCountryId(String countryCode){
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromHttpUrl(accuweatherURL + "/locations/v1/adminareas")
+                .queryParam("apikey", apikey)
+                .queryParam("countryCode", countryCode);
+
+        ResponseEntity<List<AdminArea>> response = restTemplate.exchange(
+                uriBuilder.build().encode().toUri(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<AdminArea>>() {
+                });
+
+        return response.getBody();
     }
 }
