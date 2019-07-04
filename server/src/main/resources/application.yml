@@ -1,5 +1,5 @@
 server:
   port: 9000
-apikey: yourApiKeyFromAccuWeather
+apikey: 6OtrHJXfWjtGUyAEyy4zjIp9qLUv9PtJ
 accuweather:
   root: http://dataservice.accuweather.com
